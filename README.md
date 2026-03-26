@@ -10,25 +10,18 @@ The bar updates automatically after every response, right below the input box.
 
 ## Preview
 
-### Normal usage
+![claude-usage-bar preview](preview.svg)
+
+<details>
+<summary>Plain text preview (no color)</summary>
+
 ```
-5h: ██░░░░░░ 28%  reset 2h 14m  |  7d: ████░░░░ 55%  reset 4d 0h  |  ctx: ███░░░░░ 42%
+Normal   │ 5h: ██░░░░░░ 28%  reset 2h 14m  |  7d: ████░░░░ 55%  reset 4d 0h  |  ctx: ███░░░░░ 42%
+Warning  │ 5h: ██████░░ 85%  reset 0h 42m  |  7d: ████░░░░ 62%  reset 1d 6h  |  ctx: ██████░░ 75%
+Critical │ 5h: ███████░ 95%  reset 0h 12m  |  7d: ███████░ 92%  reset 3d 2h  |  ctx: ███████░ 88%
 ```
 
-### Approaching limits (orange)
-```
-5h: ██████░░ 85%  reset 0h 42m  |  7d: ████░░░░ 62%  reset 1d 6h  |  ctx: ██████░░ 75%
-```
-
-### Critical (red)
-```
-5h: ███████░ 95%  reset 0h 12m  |  7d: ███████░ 92%  reset 3d 2h  |  ctx: ███████░ 88%
-```
-
-### Waiting for first response
-```
-5h: N/A  |  7d: N/A
-```
+</details>
 
 ---
 
@@ -59,7 +52,7 @@ The bar updates automatically after every response, right below the input box.
 ### Option 1 — Automatic (recommended)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-usage-bar.git
+git clone https://github.com/bhutano/claude-usage-bar.git
 cd claude-usage-bar
 bash install.sh
 ```
@@ -237,20 +230,7 @@ La barra si aggiorna automaticamente dopo ogni risposta, sotto la casella di inp
 
 ## Anteprima
 
-### Utilizzo normale
-```
-5h: ██░░░░░░ 28%  reset 2h 14m  |  7d: ████░░░░ 55%  reset 4g 0h  |  ctx: ███░░░░░ 42%
-```
-
-### Avvicinamento ai limiti (arancione)
-```
-5h: ██████░░ 85%  reset 0h 42m  |  7d: ████░░░░ 62%  reset 1g 6h  |  ctx: ██████░░ 75%
-```
-
-### Limiti critici (rosso)
-```
-5h: ███████░ 95%  reset 0h 12m  |  7d: ███████░ 92%  reset 3g 2h  |  ctx: ███████░ 88%
-```
+![claude-usage-bar preview](preview.svg)
 
 ---
 
@@ -273,7 +253,7 @@ La barra si aggiorna automaticamente dopo ogni risposta, sotto la casella di inp
 ### Opzione 1 — Script automatico (consigliato)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-usage-bar.git
+git clone https://github.com/bhutano/claude-usage-bar.git
 cd claude-usage-bar
 bash install.sh
 ```
