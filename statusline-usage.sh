@@ -1,7 +1,7 @@
 #!/bin/bash
 # ──────────────────────────────────────────────────────────────
 #  claude-usage-bar  —  status line for Claude Code CLI
-#  https://github.com/YOUR_USERNAME/claude-usage-bar
+#  https://github.com/bhutano/claude-usage-bar
 #
 #  Requirements: Python 3  (auto-detected)
 #  Works on: macOS, Linux, Windows (Git Bash / WSL)
