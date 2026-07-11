@@ -4,6 +4,8 @@ A persistent status bar for **Claude Code CLI** that shows your account's rate l
 
 The bar updates automatically after every response, right below the input box.
 
+Also using **Codex CLI**? Check out [codex-usage-bar](https://github.com/bhutano/codex-usage-bar): the same compact usage-bar idea, rebuilt around Codex CLI's local session logs.
+
 > 🌐 [Leggi in italiano](#italiano)
 
 ---
@@ -225,6 +227,8 @@ MIT
 Una barra di stato persistente per **Claude Code CLI** che mostra in tempo reale i limiti di utilizzo dell'account (finestre 5h e 7d), la finestra di contesto della sessione corrente e il countdown al reset — esattamente come la pagina "Utilizzo" nelle impostazioni di Claude.
 
 La barra si aggiorna automaticamente dopo ogni risposta, sotto la casella di input.
+
+Usi anche **Codex CLI**? Dai un'occhiata a [codex-usage-bar](https://github.com/bhutano/codex-usage-bar): la stessa idea di barra compatta, ricostruita sui log locali di sessione di Codex CLI.
 
 ---
 
