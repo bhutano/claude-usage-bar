@@ -1,0 +1,10 @@
+# Shell scripts MUST keep LF line endings, otherwise bash on Windows
+# (Git Bash / WSL) fails with "$'\r': command not found" and shebang errors.
+*.sh text eol=lf
+
+# Config/skill files bash reads at runtime — keep LF as well.
+*.conf text eol=lf
+SKILL.md text eol=lf
+
+# Let Git handle everything else normally.
+* text=auto

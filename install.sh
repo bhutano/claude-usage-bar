@@ -70,6 +70,7 @@ echo "  ────────────────────────
 
 # ── 1. Copy statusline script ─────────────────────────────────
 echo "  [1/4] Copying statusline-usage.sh to $CLAUDE_DIR ..."
+mkdir -p "$CLAUDE_DIR"
 cp "$SCRIPT_DIR/statusline-usage.sh" "$CLAUDE_DIR/statusline-usage.sh"
 chmod +x "$CLAUDE_DIR/statusline-usage.sh"
 
