@@ -63,6 +63,16 @@ The installer will ask you to choose a language, then set everything up automati
 
 Then **restart Claude Code**.
 
+> **Windows:** run the installer in the **same** environment where Claude Code runs.
+> For a native Windows Claude Code, use **Git Bash** — open "Git Bash" from the Start
+> menu and run `bash install.sh`, or from PowerShell (locates Git Bash via `git` on PATH):
+> ```powershell
+> & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh
+> ```
+> Only use **WSL** if Claude Code also runs inside WSL — otherwise the status bar
+> installs into WSL's Linux home (`/home/<you>/.claude`) and Windows Claude Code
+> won't see it.
+
 ### Option 2 — Manual
 
 1. Copy `statusline-usage.sh` to `~/.claude/` and make it executable:
@@ -206,7 +216,9 @@ claude-usage-bar/
 |----------|--------|
 | macOS | ✓ |
 | Linux | ✓ |
-| Windows (Git Bash / WSL) | ✓ |
+| Windows (Git Bash / WSL) | ✓ * |
+
+\* On Windows, install in the **same** environment where Claude Code runs (see the note under [Installation → Option 1](#option-1--automatic-recommended)). A native Windows Claude Code → use Git Bash; only use WSL if Claude Code also runs in WSL.
 
 Python is auto-detected (`python3`, `python`, common paths). No external dependencies — standard library only.
 
@@ -265,6 +277,17 @@ bash install.sh
 L'installer chiederà la lingua preferita e configurerà tutto automaticamente.
 
 Poi **riavvia Claude Code**.
+
+> **Windows:** esegui l'installer nello **stesso** ambiente in cui gira Claude Code.
+> Per un Claude Code nativo su Windows usa **Git Bash** — apri "Git Bash" dal menu
+> Start ed esegui `bash install.sh`, oppure da PowerShell (individua Git Bash tramite
+> `git` nel PATH):
+> ```powershell
+> & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh
+> ```
+> Usa **WSL** solo se anche Claude Code gira dentro WSL — altrimenti la barra viene
+> installata nella home Linux di WSL (`/home/<tu>/.claude`) e il Claude Code di
+> Windows non la vedrà.
 
 ### Opzione 2 — Manuale
 

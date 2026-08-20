@@ -21,6 +21,33 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# ── Warn if running under WSL (common Windows pitfall) ────────
+# WSL's $HOME is /home/<user>, so we would install into WSL's Linux
+# filesystem. A Claude Code running natively on Windows reads its config
+# from C:\Users\<user>\.claude and would never see that install.
+if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; then
+    echo ""
+    echo "  WARNING: WSL detected — this installs into WSL's Linux home:"
+    echo "      $CLAUDE_DIR"
+    echo "  A Claude Code running natively on Windows reads its config from"
+    echo "  C:\\Users\\<you>\\.claude and will NOT see this install."
+    echo ""
+    echo "  For a native Windows Claude Code, cancel and re-run with Git Bash:"
+    echo '    - open "Git Bash" from the Start menu, cd into this folder, run:'
+    echo "        bash install.sh"
+    echo '    - or from PowerShell (locates Git Bash via git on PATH):'
+    echo '        & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh'
+    echo ""
+    if [ -t 0 ]; then
+        printf "  Install into WSL home anyway? [y/N]: "
+        read -r wsl_ok
+        case "$wsl_ok" in
+            y|Y) ;;
+            *) echo "  Aborted."; exit 0 ;;
+        esac
+    fi
+fi
+
 # ── Interactive language prompt (if not passed via --lang) ────
 if [ -z "$LANG_CODE" ]; then
     echo ""
