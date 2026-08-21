@@ -36,7 +36,7 @@ fi
 
 "$PYTHON" - <<'PYEOF' "$INPUT" "$LANG_CODE"
 # -*- coding: utf-8 -*-
-import sys, json, datetime, io
+import sys, json, datetime, io, os
 
 # Force UTF-8 on Windows (avoids cp1252 encoding errors)
 if sys.platform == "win32":
@@ -84,6 +84,8 @@ except Exception:
 
 # ── ANSI colors ───────────────────────────────────────────────
 GREEN  = "\033[32m"
+BRIGHT_GREEN = "\033[92m"
+YELLOW = "\033[33m"
 ORANGE = "\033[38;5;208m"
 RED    = "\033[31m"
 CYAN   = "\033[36m"
@@ -138,15 +140,39 @@ def time_until(ts):
     except Exception:
         return f"{DIM}?{RESET}"
 
+def compact_path(path):
+    """Replace the current user's home directory with ~."""
+    if not path:
+        return ""
+
+    value = str(path)
+    home = os.path.expanduser("~")
+    try:
+        normalized_value = os.path.normcase(os.path.normpath(value))
+        normalized_home = os.path.normcase(os.path.normpath(home))
+        if normalized_value == normalized_home:
+            return "~"
+        if normalized_value.startswith(normalized_home + os.sep):
+            return "~" + value[len(home):]
+    except Exception:
+        pass
+    return value
+
 # ── Data extraction ───────────────────────────────────────────
 rate = data.get("rate_limits", {})
 fh   = rate.get("five_hour", {})
 sd   = rate.get("seven_day", {})
 ctx  = data.get("context_window", {})
+model = data.get("model") or {}
+effort = data.get("effort") or {}
+workspace = data.get("workspace") or {}
 
 fh_pct, fh_reset = fh.get("used_percentage"), fh.get("resets_at")
 sd_pct, sd_reset = sd.get("used_percentage"), sd.get("resets_at")
 ctx_pct          = ctx.get("used_percentage")
+model_name       = model.get("display_name") or model.get("id")
+effort_level     = effort.get("level")
+cwd              = workspace.get("current_dir") or data.get("cwd") or workspace.get("project_dir")
 
 # ── Build output ──────────────────────────────────────────────
 parts = []
@@ -168,4 +194,18 @@ if ctx_pct is not None:
 
 sep = f"  {DIM}|{RESET}  "
 print(sep.join(parts))
+
+session_details = []
+if model_name:
+    model_details = f"{YELLOW}{model_name}{RESET}"
+    if effort_level:
+        model_details += f" {DIM}{effort_level}{RESET}"
+    session_details.append(model_details)
+elif effort_level:
+    session_details.append(f"{DIM}{effort_level}{RESET}")
+if cwd:
+    session_details.append(f"{BRIGHT_GREEN}{compact_path(cwd)}{RESET}")
+if session_details:
+    detail_sep = f" {DIM}·{RESET} "
+    print(detail_sep.join(session_details))
 PYEOF

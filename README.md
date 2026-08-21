@@ -1,6 +1,6 @@
 # claude-usage-bar
 
-A persistent status bar for **Claude Code CLI** that shows your account's rate limit usage (5h and 7d windows), current session context, and countdown to reset — just like the "Usage" page in Claude settings.
+A persistent status bar for **Claude Code CLI** that shows your account's rate limit usage (5h and 7d windows), current session context, countdown to reset, and current session details — just like the "Usage" page in Claude settings.
 
 The bar updates automatically after every response, right below the input box.
 
@@ -19,8 +19,11 @@ Also using **Codex CLI**? Check out [codex-usage-bar](https://github.com/bhutano
 
 ```
 Normal   │ 5h: ██░░░░░░ 28%  reset 2h 14m  |  7d: ████░░░░ 55%  reset 4d 0h  |  ctx: ███░░░░░ 42%
+         │ Opus 4.6 high · ~\Desktop\claude_usage
 Warning  │ 5h: ██████░░ 85%  reset 0h 42m  |  7d: ████░░░░ 62%  reset 1d 6h  |  ctx: ██████░░ 75%
+         │ Sonnet 4.6 medium · ~/Projects/my-app
 Critical │ 5h: ███████░ 95%  reset 0h 12m  |  7d: ███████░ 92%  reset 3d 2h  |  ctx: ███████░ 88%
+         │ Opus 4.6 max · ~/Work/production
 ```
 
 </details>
@@ -35,6 +38,7 @@ Critical │ 5h: ███████░ 95%  reset 0h 12m  |  7d: ████
 | **7d** | Weekly rate limit | green < 80% · orange 80–90% · red ≥ 90% |
 | **ctx** | Context window usage for the current session | green < 70% · orange 70–80% · red > 80% |
 | **reset** | Countdown to limit reset | hours/minutes if < 24h · days and hours if ≥ 24h |
+| **session details** | Current model, reasoning effort, and working directory | second line: yellow model, bright-green directory; the home directory is shortened to `~` |
 
 > **Note:** `5h` and `7d` show real data only with a **Claude.ai Pro or Max** plan.
 > They will appear as `N/A` when using a standalone API key.
@@ -44,7 +48,7 @@ Critical │ 5h: ███████░ 95%  reset 0h 12m  |  7d: ████
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed
-- Python 3.6+  (macOS/Linux: pre-installed · Windows: [python.org](https://python.org))
+- Python 3.6+ for the Bash renderer (the native PowerShell renderer does not require Python)
 - **Claude.ai Pro or Max** plan for rate limit data
 
 ---
@@ -53,23 +57,28 @@ Critical │ 5h: ███████░ 95%  reset 0h 12m  |  7d: ████
 
 ### Option 1 — Automatic (recommended)
 
+**macOS / Linux / Git Bash / WSL:**
+
 ```bash
 git clone https://github.com/bhutano/claude-usage-bar.git
 cd claude-usage-bar
 bash install.sh
 ```
 
-The installer will ask you to choose a language, then set everything up automatically.
+**Native Windows PowerShell:**
+
+```powershell
+git clone https://github.com/bhutano/claude-usage-bar.git
+cd claude-usage-bar
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+Both installers ask you to choose a language, then set everything up automatically. The PowerShell installer backs up an existing `settings.json` as `settings.json.bak` before changing it.
 
 Then **restart Claude Code**.
 
-> **Windows:** run the installer in the **same** environment where Claude Code runs.
-> For a native Windows Claude Code, use **Git Bash** — open "Git Bash" from the Start
-> menu and run `bash install.sh`, or from PowerShell (locates Git Bash via `git` on PATH):
-> ```powershell
-> & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh
-> ```
-> Only use **WSL** if Claude Code also runs inside WSL — otherwise the status bar
+> **Windows:** use `install.ps1` for a native Windows Claude Code. Only use **WSL**
+> if Claude Code also runs inside WSL — otherwise the status bar
 > installs into WSL's Linux home (`/home/<you>/.claude`) and Windows Claude Code
 > won't see it.
 
@@ -97,6 +106,17 @@ Then **restart Claude Code**.
    ```
 
 4. Restart Claude Code.
+
+On native Windows, copy `statusline-usage.ps1` to `%USERPROFILE%\.claude\` and use this command instead:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\<you>\\.claude\\statusline-usage.ps1\""
+  }
+}
+```
 
 ### Option 3 — Skill `/usage-bar`
 
@@ -179,12 +199,22 @@ Then set `LANG=fr` in `~/.claude/usage-bar.conf`.
 
 ## How it works
 
-Claude Code pipes a JSON object to the script's stdin after each response. The script extracts `rate_limits` and `context_window` fields and formats them with ANSI color bars and a reset countdown.
+Claude Code pipes a JSON object to the script's stdin after each response. The script extracts rate limits, context usage, model, reasoning effort, and the current working directory, then formats them as a two-line status display.
 
 Relevant JSON fields:
 
 ```json
 {
+  "model": {
+    "id": "claude-opus-4-6",
+    "display_name": "Opus 4.6"
+  },
+  "effort": {
+    "level": "high"
+  },
+  "workspace": {
+    "current_dir": "/home/user/project"
+  },
   "context_window": {
     "used_percentage": 42
   },
@@ -203,9 +233,11 @@ Relevant JSON fields:
 claude-usage-bar/
 ├── README.md               ← this file
 ├── SKILL.md                ← /usage-bar skill (auto-installer + help)
-├── statusline-usage.sh     ← status bar script (i18n, cross-platform)
+├── statusline-usage.sh     ← Bash renderer (macOS, Linux, Git Bash, WSL)
+├── statusline-usage.ps1    ← native Windows PowerShell renderer
 ├── usage-bar.conf          ← language config (copy to ~/.claude/)
-└── install.sh              ← one-shot installer with language prompt
+├── install.sh              ← Bash installer
+└── install.ps1             ← native Windows PowerShell installer
 ```
 
 ---
@@ -216,11 +248,18 @@ claude-usage-bar/
 |----------|--------|
 | macOS | ✓ |
 | Linux | ✓ |
+| Windows (PowerShell) | ✓ |
 | Windows (Git Bash / WSL) | ✓ * |
 
-\* On Windows, install in the **same** environment where Claude Code runs (see the note under [Installation → Option 1](#option-1--automatic-recommended)). A native Windows Claude Code → use Git Bash; only use WSL if Claude Code also runs in WSL.
+\* Install in the **same** environment where Claude Code runs. For native Windows use PowerShell; only use WSL if Claude Code also runs in WSL.
 
-Python is auto-detected (`python3`, `python`, common paths). No external dependencies — standard library only.
+Python is auto-detected by the Bash renderer (`python3`, `python`, common paths). The native PowerShell renderer has no external dependencies.
+
+---
+
+## Credits
+
+Native PowerShell support is adapted from [RunXPS/claude-usage-bar](https://github.com/RunXPS/claude-usage-bar), commit [`7a82565`](https://github.com/RunXPS/claude-usage-bar/commit/7a825654090d2708dcee85e282e0e5c5bbfdc271), and updated to preserve this project's countdown, thresholds, session details, and safe settings handling.
 
 ---
 
@@ -236,7 +275,7 @@ MIT
 
 # claude-usage-bar — Italiano
 
-Una barra di stato persistente per **Claude Code CLI** che mostra in tempo reale i limiti di utilizzo dell'account (finestre 5h e 7d), la finestra di contesto della sessione corrente e il countdown al reset — esattamente come la pagina "Utilizzo" nelle impostazioni di Claude.
+Una barra di stato persistente per **Claude Code CLI** che mostra in tempo reale i limiti di utilizzo dell'account (finestre 5h e 7d), la finestra di contesto, il countdown al reset e i dettagli della sessione corrente — esattamente come la pagina "Utilizzo" nelle impostazioni di Claude.
 
 La barra si aggiorna automaticamente dopo ogni risposta, sotto la casella di input.
 
@@ -258,6 +297,7 @@ Usi anche **Codex CLI**? Dai un'occhiata a [codex-usage-bar](https://github.com/
 | **7d** | Rate limit settimanale | verde < 80% · arancione 80–90% · rosso ≥ 90% |
 | **ctx** | Finestra di contesto della sessione corrente | verde < 70% · arancione 70–80% · rosso > 80% |
 | **reset** | Countdown al reset | ore/minuti se < 24h · giorni e ore se ≥ 24h |
+| **dettagli sessione** | Modello, effort di ragionamento e cartella di lavoro correnti | seconda riga: modello giallo, cartella verde acceso; la home è abbreviata con `~` |
 
 > **Nota:** `5h` e `7d` mostrano dati reali solo con piano **Claude.ai Pro o Max**.
 > Con API key standalone appariranno come `N/A`.
@@ -268,24 +308,28 @@ Usi anche **Codex CLI**? Dai un'occhiata a [codex-usage-bar](https://github.com/
 
 ### Opzione 1 — Script automatico (consigliato)
 
+**macOS / Linux / Git Bash / WSL:**
+
 ```bash
 git clone https://github.com/bhutano/claude-usage-bar.git
 cd claude-usage-bar
 bash install.sh
 ```
 
-L'installer chiederà la lingua preferita e configurerà tutto automaticamente.
+**Windows PowerShell nativo:**
+
+```powershell
+git clone https://github.com/bhutano/claude-usage-bar.git
+cd claude-usage-bar
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+Entrambi gli installer chiedono la lingua e configurano tutto automaticamente. L'installer PowerShell salva una copia dell'eventuale `settings.json` esistente come `settings.json.bak` prima di modificarlo.
 
 Poi **riavvia Claude Code**.
 
-> **Windows:** esegui l'installer nello **stesso** ambiente in cui gira Claude Code.
-> Per un Claude Code nativo su Windows usa **Git Bash** — apri "Git Bash" dal menu
-> Start ed esegui `bash install.sh`, oppure da PowerShell (individua Git Bash tramite
-> `git` nel PATH):
-> ```powershell
-> & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh
-> ```
-> Usa **WSL** solo se anche Claude Code gira dentro WSL — altrimenti la barra viene
+> **Windows:** usa `install.ps1` per Claude Code nativo. Usa **WSL** solo se anche
+> Claude Code gira dentro WSL — altrimenti la barra viene
 > installata nella home Linux di WSL (`/home/<tu>/.claude`) e il Claude Code di
 > Windows non la vedrà.
 
@@ -313,6 +357,12 @@ Poi **riavvia Claude Code**.
    ```
 
 4. Riavvia Claude Code.
+
+Su Windows nativo copia invece `statusline-usage.ps1` in `%USERPROFILE%\.claude\` e configura `statusLine` per eseguire:
+
+```text
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\<utente>\.claude\statusline-usage.ps1"
+```
 
 ---
 

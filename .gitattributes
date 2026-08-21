@@ -6,5 +6,8 @@
 *.conf text eol=lf
 SKILL.md text eol=lf
 
+# Native Windows PowerShell scripts.
+*.ps1 text eol=crlf
+
 # Let Git handle everything else normally.
 * text=auto

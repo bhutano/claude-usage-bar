@@ -32,11 +32,9 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     echo "  A Claude Code running natively on Windows reads its config from"
     echo "  C:\\Users\\<you>\\.claude and will NOT see this install."
     echo ""
-    echo "  For a native Windows Claude Code, cancel and re-run with Git Bash:"
-    echo '    - open "Git Bash" from the Start menu, cd into this folder, run:'
-    echo "        bash install.sh"
-    echo '    - or from PowerShell (locates Git Bash via git on PATH):'
-    echo '        & "$(Split-Path (Split-Path (Get-Command git).Source))\bin\bash.exe" install.sh'
+    echo "  For a native Windows Claude Code, cancel and re-run from PowerShell:"
+    echo "      powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\install.ps1"
+    echo "  Git Bash with bash install.sh also remains supported."
     echo ""
     if [ -t 0 ]; then
         printf "  Install into WSL home anyway? [y/N]: "
@@ -77,8 +75,15 @@ chmod +x "$CLAUDE_DIR/statusline-usage.sh"
 # ── 2. Install skill ──────────────────────────────────────────
 echo "  [2/4] Installing skill /usage-bar to $SKILLS_DIR ..."
 mkdir -p "$SKILLS_DIR"
-cp "$SCRIPT_DIR/SKILL.md"              "$SKILLS_DIR/SKILL.md"
-cp "$SCRIPT_DIR/statusline-usage.sh"   "$SKILLS_DIR/statusline-usage.sh"
+if [ "$SCRIPT_DIR" != "$SKILLS_DIR" ]; then
+    cp "$SCRIPT_DIR/SKILL.md"              "$SKILLS_DIR/SKILL.md"
+    cp "$SCRIPT_DIR/statusline-usage.sh"   "$SKILLS_DIR/statusline-usage.sh"
+    cp "$SCRIPT_DIR/statusline-usage.ps1"  "$SKILLS_DIR/statusline-usage.ps1"
+    cp "$SCRIPT_DIR/install.sh"            "$SKILLS_DIR/install.sh"
+    cp "$SCRIPT_DIR/install.ps1"           "$SKILLS_DIR/install.ps1"
+else
+    echo "        Skill files are already in place."
+fi
 chmod +x "$SKILLS_DIR/statusline-usage.sh"
 
 # ── 3. Write config ───────────────────────────────────────────
